@@ -6,6 +6,8 @@
 %% Fecha: 22/03/13
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% CARGAR LISTA PALABRA
+
 % Predicado para cargar las listas de palabras
 
 cargarListaPalabra(Archivo, Alfabeto,Palabras):-
@@ -28,17 +30,6 @@ transformaEnAscii([C|R], Alf):-
   comparar(CabezaAscii,AlfabetoAscii),
   transformaEnAscii(R,Alf),
   !.
-  
-% Predicado para convertir un alfabeto numerico en Ascii
-
-numberAscii([],L,AlfabetoAscii):-
-  AlfabetoAscii = L.
-
-numberAscii([AlfC|AlfR],L,AlfabetoAscii):-
-  number(AlfC),
-  name(AlfC,Temp),
-  append(L,Temp,X),
-  numberAscii(AlfR,X,AlfabetoAscii).
 
 % Predicado para comparar que las palabras estan formadas por
 % el alfabeto
@@ -50,6 +41,8 @@ comparar([C|R],Alf):-
   comparar(R,Alf),
   !.
 
+%% SOPA LETRA
+
 % Predicado que devuelve todas las posibles sopas de letras
 
 %sopaLetra(Alfabeto,Tam,Aceptadas,Rechazadas):-
@@ -58,21 +51,24 @@ comparar([C|R],Alf):-
 
 generarFilas(Alfabeto,N,Fila):-
   L = [],
-  agregarElem(Alfabeto,L,Fila,N).
+  agregarElem(Alfabeto,L,N,ListaFila),
+  Fila = ListaFila.
 
 % Predicado que agrega los elementos a una fila
 
-agregarElem(Alfabeto,L,Fila,N):-
+agregarElem(_,L,N,ListaFila):-
+  length(L,Long),
+  Long >= N,
+  L = ListaFila,
+  !.
+  
+agregarElem(Alfabeto,L,N,ListaFila):-
   randomElem(Alfabeto,Elem),
-  write(Elem),nl,
-  write(L),nl,
-  append(L,Elem,Fila),
-  write(Fila),
-  atom_chars(Fila,ListaFila),
-  write(ListaFila), nl,
-  lenght(ListaFila,Long),
-  Long =< N,
-  agregarElem(Alfabeto,Fila,Fila,N).
+  write('elemento  '),write(Elem),nl,
+  write('lista  '),write(L),nl,
+  Fila = [Elem|L],
+  write('fila  '),write(Fila),nl,
+  agregarElem(Alfabeto,Fila,N,ListaFila).
   
 % Predicado que reemplaza el elemento en una posicion de la fila
 % por otro
@@ -120,6 +116,8 @@ randomElem(Lista, Elem) :-
   random(0, Long, Pos),
   nth0(Pos, Lista, Elem).
   
+%% MOSTRAR SOPA.
+  
 % Predicado que muestra las sopas de letra en pantalla
 
 mostrarSopa([C|R]):-
@@ -143,6 +141,8 @@ separar([]):-
 separar(A):-
   write(A),
   nl.
+
+%% GENERADOR SOPA
 
 % Predicado Principal: generadorSopa
 
