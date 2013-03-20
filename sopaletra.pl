@@ -47,28 +47,11 @@ comparar([C|R],Alf):-
 
 %sopaLetra(Alfabeto,Tam,Aceptadas,Rechazadas):-
 
-% Predicado que genera las filas en la sopa de letras
+% Predicado que arma las sopas de letras
 
-generarFilas(Alfabeto,N,Fila):-
-  L = [],
-  agregarElem(Alfabeto,L,N,ListaFila),
-  Fila = ListaFila.
-
-% Predicado que agrega los elementos a una fila
-
-agregarElem(_,L,N,ListaFila):-
-  length(L,Long),
-  Long >= N,
-  L = ListaFila,
-  !.
-  
-agregarElem(Alfabeto,L,N,ListaFila):-
-  randomElem(Alfabeto,Elem),
-  write('elemento  '),write(Elem),nl,
-  write('lista  '),write(L),nl,
-  Fila = [Elem|L],
-  write('fila  '),write(Fila),nl,
-  agregarElem(Alfabeto,Fila,N,ListaFila).
+armarSopa(Tam,Sopa) :-
+  length(Fila, Tam), list_to_set(Fila, ['$']),
+  length(Sopa, Tam), list_to_set(Sopa, [Fila]).
   
 % Predicado que reemplaza el elemento en una posicion de la fila
 % por otro
@@ -89,6 +72,7 @@ reemplazarEnFila([PrimeraLetra|RestoLetras], Fila, Pos, NuevaFila) :-
   Pos >= 0,
   length(Fila, N), 
   Pos < N,
+  verificarRepeticion(PrimeraLetra,Fila,Pos),
   reemplazar(Fila, Pos, PrimeraLetra, FilaTmp),                             
   Pos1 is Pos + 1,
   reemplazarEnFila(RestoLetras, FilaTmp, Pos1, NuevaFila),
@@ -98,15 +82,46 @@ reemplazarEnFila([PrimeraLetra|RestoLetras], Fila, Pos, NuevaFila) :-
 
 addHorizontal(Palabra, Rechazadas, SopaLetras, Result) :-
   length(SopaLetras, Tam),
-  random(0, Tam, PosFila),                             %Obtengo las posicion donde se agregara la palabra
-  random(0, Tam, PosCol),
-  nth0(PosFila, SopaLetras, Fila),                         %Obtengo la Sublista (Fila) en la que agregare la palabra
+  numlist(1,Tam,PosFila), member(F,PosFila),
+  X is F-1,
+  numlist(1,Tam,PosCol), member(C,PosCol),
+  Y is C-1,
+  nth0(X, SopaLetras, Fila),                         %Obtengo la Sublista (Fila) en la que agregare la palabra
   atom_chars(Palabra, Letras),               %Guardo la palabra como una lista de atomos en Tmp
   length(Letras, Long),                              %Obtengo la longitud de la palabra
   Long =< Tam,                                       %Verifico que la palabra quepa en el tablero
-  reemplazarEnFila(Letras, Fila, PosCol, FilaNueva),
-  reemplazar(SopaLetras,PosFila,FilaNueva,SopaLetrasAct),
+  reemplazarEnFila(Letras, Fila, Y, FilaNueva),
+  reemplazar(SopaLetras,X,FilaNueva,SopaLetrasAct),
   Result = SopaLetrasAct.
+  
+addReverse(Palabra, Rechazadas, SopaLetras, Result) :-
+  length(SopaLetras, Tam),
+  numlist(1,Tam,PosFila), member(F,PosFila),
+  X is F-1,
+  numlist(1,Tam,PosCol), member(C,PosCol),
+  Y is C-1,
+  nth0(X, SopaLetras, Fila),                         %Obtengo la Sublista (Fila) en la que agregare la palabra
+  atom_chars(Palabra, Letras),               %Guardo la palabra como una lista de atomos en Tmp
+  reverse(Letras,Reverse),
+  length(Reverse, Long),                              %Obtengo la longitud de la palabra
+  Long =< Tam,                                       %Verifico que la palabra quepa en el tablero
+  reemplazarEnFila(Reverse, Fila, Y, FilaNueva),
+  reemplazar(SopaLetras,X,FilaNueva,SopaLetrasAct),
+  Result = SopaLetrasAct.
+  
+%% Predicado para verificar que no se inserten 2 palabras en el mismo sitio
+
+verificarRepeticion(Letra,Fila,PosCol) :-
+  atom_codes(Letra,X),
+  nth0(PosCol,Fila,Laletra),
+  atom_codes(Laletra,Y),
+  X =:= Y,
+  !.
+
+verificarRepeticion(_,Fila,PosCol) :-
+  nth0(PosCol,Fila,Letra),
+  atom_codes(Letra,Y),
+  Y =:= 36.
   
 %% Predicado que genera un elemento random del alfabeto
 
