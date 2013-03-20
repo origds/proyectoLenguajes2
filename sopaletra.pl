@@ -94,13 +94,13 @@ addHorizontal(Palabra, Rechazadas, SopaLetras, Result) :-
   reemplazar(SopaLetras,X,FilaNueva,SopaLetrasAct),
   Result = SopaLetrasAct.
   
-addReverse(Palabra, Rechazadas, SopaLetras, Result) :-
+addHorizontalReverse(Palabra, Rechazadas, SopaLetras, Result) :-
   length(SopaLetras, Tam),
   numlist(1,Tam,PosFila), member(F,PosFila),
   X is F-1,
   numlist(1,Tam,PosCol), member(C,PosCol),
   Y is C-1,
-  nth0(X, SopaLetras, Fila),                         %Obtengo la Sublista (Fila) en la que agregare la palabra
+  nth0(X, SopaLetras, Fila),                       %Obtengo la Sublista (Fila) en la que agregare la palabra
   atom_chars(Palabra, Letras),               %Guardo la palabra como una lista de atomos en Tmp
   reverse(Letras,Reverse),
   length(Reverse, Long),                              %Obtengo la longitud de la palabra
@@ -108,8 +108,20 @@ addReverse(Palabra, Rechazadas, SopaLetras, Result) :-
   reemplazarEnFila(Reverse, Fila, Y, FilaNueva),
   reemplazar(SopaLetras,X,FilaNueva,SopaLetrasAct),
   Result = SopaLetrasAct.
+
+% Predicado para agregar palabras en forma vertical.
+
+addVertical(Palabra, Rechazadas, SopaLetras, Result):-
+  trasponer(SopaLetras,Sopa),
+  addHorizontal(Palabra,Rechazadas,Sopa,Aux),
+  trasponer(Aux,Result).
   
-%% Predicado para verificar que no se inserten 2 palabras en el mismo sitio
+addVerticalReverse(Palabra, Rechazadas, SopaLetras, Result):-
+  trasponer(SopaLetras,Sopa),
+  addHorizontalReverse(Palabra,Rechazadas,Sopa,Aux),
+  trasponer(Aux,Result).
+  
+% Predicado para verificar que no se inserten 2 palabras en el mismo sitio
 
 verificarRepeticion(Letra,Fila,PosCol) :-
   atom_codes(Letra,X),
@@ -122,7 +134,19 @@ verificarRepeticion(_,Fila,PosCol) :-
   nth0(PosCol,Fila,Letra),
   atom_codes(Letra,Y),
   Y =:= 36.
-  
+ 
+%% Predicado que saca la traspuesta de una matriz
+
+trasponer([[]|_], []) :- !.
+trasponer([[I|Is]|Rs], [Col|MT]) :-
+  primeraCol([[I|Is]|Rs], Col, [Is|NRs]),
+  trasponer([Is|NRs], MT).
+
+primeraCol([], [], []).
+primeraCol([[]|_], [], []).
+primeraCol([[I|Is]|Rs], [I|Col], [Is|Rest]) :-
+  primeraCol(Rs, Col, Rest).
+    
 %% Predicado que genera un elemento random del alfabeto
 
 randomElem([], []).
