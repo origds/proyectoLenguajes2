@@ -39,11 +39,6 @@ comparar([C|R],Alf):-
   comparar(R,Alf),
   !.
 
-%% SOPA LETRA
-
-% Predicado que devuelve todas las posibles sopas de letras
-
-%sopaLetra(Alfabeto,Tam,Aceptadas,Rechazadas):-
 
 % Predicado que arma las sopas de letras
 
@@ -83,7 +78,6 @@ enDiagonal(_, _, [], SopaFinal, SopaFinal).
   
 enDiagonal(PosFila, PosCol, [Letra | Resto], SopaLetras, R) :-
   nth0(PosFila, SopaLetras, Fila),
-  nl, write('Voy a verificar si la letra '), write(Letra), write(' esta en '), write(PosFila), write(PosCol),
   verificarRepeticion(Letra,Fila, PosCol),                            %Quiero la fila de la posicion PosFil
   reemplazar(Fila, PosCol, Letra, FilaTmp),
   reemplazar(SopaLetras, PosFila, FilaTmp, SopaLetrasAct),
@@ -97,50 +91,71 @@ enDiagonal(PosFila, PosCol, [Letra | Resto], SopaLetras, R) :-
 enDiagonalInv(_, _, [], SopaFinal, SopaFinal).
 enDiagonalInv(PosFila, PosCol, [Letras | Resto], SopaLetras, R) :-  
   nth0(PosFila, SopaLetras, Fila),                            %Quiero la fila de la posicion PosFil
-  nl, write('Voy a verificar si la letra '), write(Letra), write(' esta en '), write(PosFila), write(PosCol),
-  verificarRepeticion(Letra,Fila, PosCol),
+  verificarRepeticion(Letras,Fila, PosCol),
   reemplazar(Fila, PosCol, Letras, FilaTmp),
   reemplazar(SopaLetras, PosFila, FilaTmp, SopaLetrasAct),
   Fil1 is PosFila + 1,                                   
   Col1 is PosCol - 1,                   
-  enDiagonalInv(Fil1, Col1, Resto, SopaLetrasAct, R).
+  enDiagonalInv(Fil1, Col1, Resto, SopaLetrasAct, R),
+  !.
 
 % Predicado que añade las palabras en forma diagonal
 
 addDiagonal(Palabra, SopaLetras, Result) :- 
  atom_chars(Palabra, Letras),
- length(Letras, Long), length(SopaLetras, Tam), Long =< Tam,
- between(1, Tam, F), PosFila is F - 1,
- between(1, Tam, C), PosCol is C - 1,
+ length(Letras, Long), 
+ length(SopaLetras, Tam), 
+ Long =< Tam,
+ between(1, Tam, F), 
+ PosFila is F - 1,
+ between(1, Tam, C), 
+ PosCol is C - 1,
  enDiagonal(PosFila, PosCol, Letras, SopaLetras, Result). 
+
+% Predicado que añade las paabras en diagonal al reves
 
 addDiagonalReverse(Palabra, SopaLetras, Result) :- 
  atom_chars(Palabra, Letras),
  reverse(Letras, Reverse),
- length(Letras, Long), length(SopaLetras, Tam), Long =< Tam,
- between(1, Tam, F), PosFila is F - 1,
- between(1, Tam, C), PosCol is C - 1,
+ length(Letras, Long), 
+ length(SopaLetras, Tam), 
+ Long =< Tam,
+ between(1, Tam, F), 
+ PosFila is F - 1,
+ between(1, Tam, C), 
+ PosCol is C - 1,
  enDiagonal(PosFila, PosCol, Reverse, SopaLetras, Result).
+
+% Predicado que añade las palabras en diagonal invertido
 
 addDiagonalInv(Palabra, SopaLetras, Result) :- 
  atom_chars(Palabra, Letras),
- length(Letras, Long), length(SopaLetras, Tam), Long =< Tam,
- between(1, Tam, F), PosFila is F - 1,
- between(1, Tam, C), PosCol is C - 1,
+ length(Letras, Long), 
+ length(SopaLetras, Tam), 
+ Long =< Tam,
+ between(1, Tam, F), 
+ PosFila is F - 1,
+ between(1, Tam, C), 
+ PosCol is C - 1,
  enDiagonalInv(PosFila, PosCol, Letras, SopaLetras, Result).
+ 
+% Predicado que añade las palabras en diagonal invertido al reves 
 
 addDiagonalInvReverse(Palabra, SopaLetras, Result) :- 
  atom_chars(Palabra, Letras),
  reverse(Letras,Reverse),
- length(Letras, Long), length(SopaLetras, Tam), Long =< Tam,
- between(1, Tam, F), PosFila is F - 1,
- between(1, Tam, C), PosCol is C - 1,
+ length(Letras, Long), 
+ length(SopaLetras, Tam), 
+ Long =< Tam,
+ between(1, Tam, F), 
+ PosFila is F - 1,
+ between(1, Tam, C), 
+ PosCol is C - 1,
  enDiagonalInv(PosFila, PosCol, Reverse, SopaLetras, Result).
-
 
 % Predicado que añade las palabras en forma horizontal 
 
-addHorizontal(Palabra, Rechazadas, SopaLetras, Result) :-
+addHorizontal(Palabra, SopaLetras, Result) :-
   length(SopaLetras, Tam),
   between(1,Tam,PosFila),
   X is PosFila-1,
@@ -154,7 +169,7 @@ addHorizontal(Palabra, Rechazadas, SopaLetras, Result) :-
   reemplazar(SopaLetras,X,FilaNueva,SopaLetrasAct),
   Result = SopaLetrasAct.
   
-addHorizontalReverse(Palabra, Rechazadas, SopaLetras, Result) :-
+addHorizontalReverse(Palabra, SopaLetras, Result) :-
   length(SopaLetras, Tam),
   between(1,Tam,PosFila),
   X is PosFila-1,
@@ -171,14 +186,14 @@ addHorizontalReverse(Palabra, Rechazadas, SopaLetras, Result) :-
 
 % Predicado para agregar palabras en forma vertical.
 
-addVertical(Palabra, Rechazadas, SopaLetras, Result):-
+addVertical(Palabra, SopaLetras, Result):-
   trasponer(SopaLetras,Sopa),
-  addHorizontal(Palabra,Rechazadas,Sopa,Aux),
+  addHorizontal(Palabra,Sopa,Aux),
   trasponer(Aux,Result).
   
-addVerticalReverse(Palabra, Rechazadas, SopaLetras, Result):-
+addVerticalReverse(Palabra, SopaLetras, Result):-
   trasponer(SopaLetras,Sopa),
-  addHorizontalReverse(Palabra,Rechazadas,Sopa,Aux),
+  addHorizontalReverse(Palabra,Sopa,Aux),
   trasponer(Aux,Result).
   
 % Predicado para verificar que no se inserten 2 palabras en el mismo sitio
@@ -240,6 +255,13 @@ randomElem(Lista, Elem) :-
   random(0, Long, Pos),
   nth0(Pos, Lista, Elem).
   
+%% SOPA LETRA
+
+% Predicado que devuelve todas las posibles sopas de letras
+
+% sopaLetra(Alfabeto,Tam,Aceptadas,Rechazadas):-
+%   armarSopa(Sopa),
+%   
 %% MOSTRAR SOPA.
   
 % Predicado que muestra las sopas de letra en pantalla
