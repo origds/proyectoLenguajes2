@@ -20,7 +20,6 @@ cargarListaPalabra(Archivo, Alfabeto,Palabras):-
 % Predicado para llevar las listas y el alfabeto a Ascii
 
 transformaEnAscii([],_).
-
 transformaEnAscii([C|R], Alf):-
   atom_codes(T,Alf),
   atom_codes(T,AlfabetoAscii),
@@ -35,7 +34,6 @@ transformaEnAscii([C|R], Alf):-
 % el alfabeto
 
 comparar([],_).
-
 comparar([C|R],Alf):-
   member(C,Alf),
   comparar(R,Alf),
@@ -67,7 +65,6 @@ reemplazar([C | R], Pos, Elem, [C | F]) :-
 
 reemplazarEnFila([], FilaTmp, _, NuevaFila):-
   FilaTmp = NuevaFila.
-
 reemplazarEnFila([PrimeraLetra|RestoLetras], Fila, Pos, NuevaFila) :-
   Pos >= 0,
   length(Fila, N), 
@@ -82,10 +79,10 @@ reemplazarEnFila([PrimeraLetra|RestoLetras], Fila, Pos, NuevaFila) :-
 
 addHorizontal(Palabra, Rechazadas, SopaLetras, Result) :-
   length(SopaLetras, Tam),
-  numlist(1,Tam,PosFila), member(F,PosFila),
-  X is F-1,
-  numlist(1,Tam,PosCol), member(C,PosCol),
-  Y is C-1,
+  between(1,Tam,PosFila),
+  X is PosFila-1,
+  between(1,Tam,PosCol),
+  Y is PosCol-1,
   nth0(X, SopaLetras, Fila),                         %Obtengo la Sublista (Fila) en la que agregare la palabra
   atom_chars(Palabra, Letras),               %Guardo la palabra como una lista de atomos en Tmp
   length(Letras, Long),                              %Obtengo la longitud de la palabra
@@ -96,10 +93,10 @@ addHorizontal(Palabra, Rechazadas, SopaLetras, Result) :-
   
 addHorizontalReverse(Palabra, Rechazadas, SopaLetras, Result) :-
   length(SopaLetras, Tam),
-  numlist(1,Tam,PosFila), member(F,PosFila),
-  X is F-1,
-  numlist(1,Tam,PosCol), member(C,PosCol),
-  Y is C-1,
+  between(1,Tam,PosFila),
+  X is PosFila-1,
+  between(1,Tam,PosCol),
+  Y is PosCol-1,
   nth0(X, SopaLetras, Fila),                       %Obtengo la Sublista (Fila) en la que agregare la palabra
   atom_chars(Palabra, Letras),               %Guardo la palabra como una lista de atomos en Tmp
   reverse(Letras,Reverse),
@@ -134,8 +131,34 @@ verificarRepeticion(_,Fila,PosCol) :-
   nth0(PosCol,Fila,Letra),
   atom_codes(Letra,Y),
   Y =:= 36.
- 
-%% Predicado que saca la traspuesta de una matriz
+  
+% Predicado que rellena con elementos random las posiciones vacias de la matriz.
+
+rellenarEspacios(Alfabeto,Sopa,SopaLlena):-
+  estaVacia(Sopa,F,C),
+  !,
+  randomElem(Alfabeto, E),
+  cambiaSopa(Sopa,F,C,E,SopaCambiada),
+  rellenarEspacios(Alfabeto,SopaCambiada,SopaLlena).
+rellenarEspacios(_,SopaLlena,SopaLlena).
+  
+cambiaSopa(Sopa, F, C, E, SopaCambiada) :-
+  nth0(F,Sopa,Fila),
+  reemplazar(Fila,C,E,NuevaFila),
+  reemplazar(Sopa,F,NuevaFila,SopaCambiada).
+  
+estaVacia(Sopa, F, C):-
+  indiceValido(Sopa,F),
+  indiceValido(Sopa,C),
+  nth0(F, Sopa, Fila),
+  nth0(C, Fila, '$').
+  
+indiceValido(Sopa, Indice) :- 
+  length(Sopa, N),
+  Tam is N-1,
+  between(0, Tam, Indice).
+  
+% Predicado que saca la traspuesta de una matriz
 
 trasponer([[]|_], []) :- !.
 trasponer([[I|Is]|Rs], [Col|MT]) :-
@@ -146,10 +169,9 @@ primeraCol([], [], []).
 primeraCol([[]|_], [], []).
 primeraCol([[I|Is]|Rs], [I|Col], [Is|Rest]) :-
   primeraCol(Rs, Col, Rest).
-    
+ 
 %% Predicado que genera un elemento random del alfabeto
 
-randomElem([], []).
 randomElem(Lista, Elem) :-
   length(Lista, Long),
   random(0, Long, Pos),
@@ -163,7 +185,6 @@ mostrarSopa([C|R]):-
   separar(C),
   mostrarSopa(R),
   !.
-
 mostrarSopa([]).
 
 % Predicado que imprime las lineas de la sopa de letras
@@ -173,10 +194,8 @@ separar([C|R]):-
   write(' '),
   separar(R),
   !.
-
 separar([]):- 
   nl.
-
 separar(A):-
   write(A),
   nl.
