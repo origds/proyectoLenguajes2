@@ -101,6 +101,7 @@ enDiagonalInv(PosFila, PosCol, [Letras | Resto], SopaLetras, R) :-
   enDiagonalInv(Fil1, Col1, Resto, SopaLetrasAct, R).
 
 % Predicado que añade las palabras en forma diagonal
+
 addDiagonal(Palabra, SopaLetras, Result) :- 
  atom_chars(Palabra, Letras),
  length(Letras, Long), length(SopaLetras, Tam), Long =< Tam,
