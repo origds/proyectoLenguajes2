@@ -75,6 +75,63 @@ reemplazarEnFila([PrimeraLetra|RestoLetras], Fila, Pos, NuevaFila) :-
   reemplazarEnFila(RestoLetras, FilaTmp, Pos1, NuevaFila),
   !.
 
+%Predicado enDiagonal. 
+%Se encarga de meter una palabra en la sopa de letras
+%En forma diagonal y hacia abajo
+
+enDiagonal(_, _, [], SopaFinal, SopaFinal).
+  
+enDiagonal(PosFila, PosCol, [Letra | Resto], SopaLetras, R) :-
+  nth0(PosFila, SopaLetras, Fila),                            %Quiero la fila de la posicion PosFil
+  reemplazar(Fila, PosCol, Letra, FilaTmp),
+  reemplazar(SopaLetras, PosFila, FilaTmp, SopaLetrasAct),
+  Fil1 is PosFila + 1,                                   
+  Col1 is PosCol + 1,                                       
+  enDiagonal(Fil1, Col1, Resto, SopaLetrasAct, R).
+
+%Predicado que anade las palabras en forma diagonal "invertida"
+%NOTA: Revisar el False que da enDiagonalInv y no AddDiagInv
+enDiagonalInv(_, _, [], SopaFinal, SopaFinal).
+enDiagonalInv(PosFila, PosCol, [Letras | Resto], SopaLetras, R) :-  
+  nth0(PosFila, SopaLetras, Fila),                            %Quiero la fila de la posicion PosFil
+  reemplazar(Fila, PosCol, Letras, FilaTmp),
+  reemplazar(SopaLetras, PosFila, FilaTmp, SopaLetrasAct),
+  Fil1 is PosFila + 1,                                   
+  Col1 is PosCol - 1,                   
+  enDiagonalInv(Fil1, Col1, Resto, SopaLetrasAct, R).
+
+% Predicado que añade las palabras en forma diagonal
+addDiagonal(Palabra, SopaLetras, Result) :- 
+ atom_chars(Palabra, Letras),
+ length(Letras, Long), length(SopaLetras, Tam), Long =< Tam,
+ between(1, Tam, F), PosFila is F - 1,
+ between(1, Tam, C), PosCol is C - 1,
+ enDiagonal(PosFila, PosCol, Letras, SopaLetras, Result). 
+
+addDiagonalReverse(Palabra, SopaLetras, Result) :- 
+ atom_chars(Palabra, Letras),
+ reverse(Letras, Reverse),
+ length(Letras, Long), length(SopaLetras, Tam), Long =< Tam,
+ between(1, Tam, F), PosFila is F - 1,
+ between(1, Tam, C), PosCol is C - 1,
+ enDiagonal(PosFila, PosCol, Reverse, SopaLetras, Result).
+
+addDiagonalInv(Palabra, SopaLetras, Result) :- 
+ atom_chars(Palabra, Letras),
+ length(Letras, Long), length(SopaLetras, Tam), Long =< Tam,
+ between(1, Tam, F), PosFila is F - 1,
+ between(1, Tam, C), PosCol is C - 1,
+ enDiagonalInv(PosFila, PosCol, Letras, SopaLetras, Result).
+
+addDiagonalInvReverse(Palabra, SopaLetras, Result) :- 
+ atom_chars(Palabra, Letras),
+ reverse(Letras,Reverse),
+ length(Letras, Long), length(SopaLetras, Tam), Long =< Tam,
+ between(1, Tam, F), PosFila is F - 1,
+ between(1, Tam, C), PosCol is C - 1,
+ enDiagonalInv(PosFila, PosCol, Reverse, SopaLetras, Result).
+
+
 % Predicado que añade las palabras en forma horizontal 
 
 addHorizontal(Palabra, Rechazadas, SopaLetras, Result) :-
@@ -84,7 +141,7 @@ addHorizontal(Palabra, Rechazadas, SopaLetras, Result) :-
   between(1,Tam,PosCol),
   Y is PosCol-1,
   nth0(X, SopaLetras, Fila),                         %Obtengo la Sublista (Fila) en la que agregare la palabra
-  atom_chars(Palabra, Letras),               %Guardo la palabra como una lista de atomos en Tmp
+  atom_chars(Palabra, Letras),               		   %Guardo la palabra como una lista de atomos en Tmp
   length(Letras, Long),                              %Obtengo la longitud de la palabra
   Long =< Tam,                                       %Verifico que la palabra quepa en el tablero
   reemplazarEnFila(Letras, Fila, Y, FilaNueva),
