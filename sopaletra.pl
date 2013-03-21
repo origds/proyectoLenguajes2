@@ -82,18 +82,23 @@ reemplazarEnFila([PrimeraLetra|RestoLetras], Fila, Pos, NuevaFila) :-
 enDiagonal(_, _, [], SopaFinal, SopaFinal).
   
 enDiagonal(PosFila, PosCol, [Letra | Resto], SopaLetras, R) :-
-  nth0(PosFila, SopaLetras, Fila),                            %Quiero la fila de la posicion PosFil
+  nth0(PosFila, SopaLetras, Fila),
+  nl, write('Voy a verificar si la letra '), write(Letra), write(' esta en '), write(PosFila), write(PosCol),
+  verificarRepeticion(Letra,Fila, PosCol),                            %Quiero la fila de la posicion PosFil
   reemplazar(Fila, PosCol, Letra, FilaTmp),
   reemplazar(SopaLetras, PosFila, FilaTmp, SopaLetrasAct),
   Fil1 is PosFila + 1,                                   
   Col1 is PosCol + 1,                                       
-  enDiagonal(Fil1, Col1, Resto, SopaLetrasAct, R).
+  enDiagonal(Fil1, Col1, Resto, SopaLetrasAct, R),
+  !.
 
 %Predicado que anade las palabras en forma diagonal "invertida"
 %NOTA: Revisar el False que da enDiagonalInv y no AddDiagInv
 enDiagonalInv(_, _, [], SopaFinal, SopaFinal).
 enDiagonalInv(PosFila, PosCol, [Letras | Resto], SopaLetras, R) :-  
   nth0(PosFila, SopaLetras, Fila),                            %Quiero la fila de la posicion PosFil
+  nl, write('Voy a verificar si la letra '), write(Letra), write(' esta en '), write(PosFila), write(PosCol),
+  verificarRepeticion(Letra,Fila, PosCol),
   reemplazar(Fila, PosCol, Letras, FilaTmp),
   reemplazar(SopaLetras, PosFila, FilaTmp, SopaLetrasAct),
   Fil1 is PosFila + 1,                                   
