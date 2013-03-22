@@ -273,7 +273,7 @@ sopaLetra(Alfabeto,Tam,Aceptadas,Rechazadas):-
   armarSopa(Tam,Sopa),
   crearSopaDeLetras(Sopa,Alfabeto,Tam,Aceptadas,SopaLetras),
   rellenarEspacios(Alfabeto,SopaLetras,SopaFinal),
-  nl,mostrarSopa(SopaFinal),nl,
+  nl,write(SopaFinal),nl,
   not(esRechazada(SopaFinal,Rechazadas)),
   mostrarSopa(SopaFinal).
 
