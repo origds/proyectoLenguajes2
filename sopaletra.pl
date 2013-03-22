@@ -38,7 +38,20 @@ comparar([C|R],Alf):-
   member(C,Alf),
   comparar(R,Alf),
   !.
+  
+% Predicado que verifica si las palabras aceptadas tienen logitud valida para esa sopa 
 
+longitudesValidas([], _) :- !.
+longitudesValidas([H|T], N) :- 
+  atom_chars(H,C),
+  length(C, L),
+  L =< N,
+  !,
+  longitudesValidas(T, N).
+longitudesValidas([H|_], _) :- 
+  !,
+  nl, write('La palabra "'), write(H), write('" es demasiado larga.'), nl,
+  fail.
 
 % Predicado que arma las sopas de letras
 
@@ -356,9 +369,9 @@ rechazadaDiagInv(Letras,Sopa) :-
   rechazadaDiagInv(_, Sopa),
   !.
 
-
 %Predicado comparaDiagonal. Triunfa si la palabra esta en la
 %diagonal de la posicion que se le indique. 
+
 comparaDiagonalInv(_,_,[], _).
 comparaDiagonalInv(PosFila, PosCol, [Letra | Resto], Sopa) :-
   nth0(PosFila, Sopa, Fila), %obtengo la fila que quiero revisar
@@ -370,6 +383,7 @@ comparaDiagonalInv(PosFila, PosCol, [Letra | Resto], Sopa) :-
 
 %Predicado comparaDiagonal. Triunfa si la palabra esta en la
 %diagonal de la posicion que se le indique. 
+
 comparaDiagonal(_,_,[], _).
 comparaDiagonal(PosFila, PosCol, [Letra | Resto], Sopa) :-
   nth0(PosFila, Sopa, Fila), %obtengo la fila que quiero revisar
@@ -379,10 +393,10 @@ comparaDiagonal(PosFila, PosCol, [Letra | Resto], Sopa) :-
   Col is PosCol + 1,
   comparaDiagonal(Fil, Col, Resto, Sopa).
 
-
 %Predicado que compara los elementos de una lista con los de otra, triunfa 
 %cuando los elementos de la primera lista se encuentran todos en la segunda
 %en el mismo orden.
+
 comparar(_, [], _).
 comparar(PosCol, [Letra | Resto], Fila) :-
   nth0(PosCol, Fila, Letra1),
@@ -443,6 +457,7 @@ generadorSopa:-
   read(ArchivoR),
   cargarListaPalabra(ArchivoA,Alfabeto,Aceptadas),
   cargarListaPalabra(ArchivoR,Alfabeto,Rechazadas),
+  longitudesValidas(Aceptadas,Tam),
   nl, write('Estas son las palabras aceptadas: '), write(Aceptadas), nl,
   nl, write('Estas son las palabras rechazadas: '), write(Rechazadas), nl,nl,
   sopaLetra(Alfabeto,Tam,Aceptadas,Rechazadas),
