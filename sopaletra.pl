@@ -6,12 +6,6 @@
 %% Fecha: 22/03/13
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-%add(X,L,L1).
-%adds element X to the beginning of the list L and returns L1
-enlistar(X,L,[X|L]).
-
 %% CARGAR LISTA PALABRA
 
 % Predicado para cargar las listas de palabras
@@ -273,22 +267,35 @@ sopaLetra(Alfabeto,Tam,Aceptadas,Rechazadas):-
   armarSopa(Tam,Sopa),
   crearSopaDeLetras(Sopa,Alfabeto,Tam,Aceptadas,SopaLetras),
   rellenarEspacios(Alfabeto,SopaLetras,SopaFinal),
-  nl,mostrarSopa(SopaFinal),nl,
   not(esRechazada(SopaFinal,Rechazadas)),
+  nl,
   mostrarSopa(SopaFinal).
 
 % Predicado que triunfa cuando una de las palabras esta rechazada en la sopa.
 
+esRechazada(_,[]).
+
+esRechazada(Sopa,[Rechazada|Resto]):-
+  atom_chars(Rechazada,Letras),
+  rechazar(Letras,Sopa),
+  esRechazada(Sopa,Resto),
+  !.
+  
 esRechazada(Sopa,[Rechazada|Resto]):-
   atom_chars(Rechazada,Letras),
   reverse(Letras,Reverse),
-  rechazadaHoriz(Letras,Sopa);
-  rechazadaVertical(Letras,Sopa);
-  rechazadaHoriz(Reverse,Sopa);
-  rechazadaVertical(Reverse,Sopa),
+  rechazar(Reverse,Sopa),
   esRechazada(Sopa,Resto),
   !.
 
+rechazar(Palabra,Sopa):-
+  rechazadaHoriz(Palabra,Sopa).
+
+rechazar(Palabra,Sopa):-
+  rechazadaVertical(Palabra,Sopa).
+  
+% Predicado que crea la sopa de letras con las palabras aceptadas
+  
 crearSopaDeLetras(SopaFinal,_,_,[], SopaFinal).
 crearSopaDeLetras(Sopa,Alfabeto,Tam, [Palabra | Resto] , SopaFinal):-
   Predicados = ['addHorizontal', 'addHorizontalReverse', 'addVertical', 
@@ -334,9 +341,6 @@ comparar(PosCol, [Letra | Resto], Fila) :-
   Pos is PosCol+1,
   comparar(Pos, Resto, Fila). 
 
-
-
-
 %% MOSTRAR SOPA.
   
 % Predicado que muestra las sopas de letra en pantalla
@@ -359,6 +363,8 @@ separar([]):-
 separar(A):-
   write(A),
   nl.
+
+% Predicado que agrega el quiero mas .
 
 quieroMas :-
   nl, write('Quieres mas?'), nl,
