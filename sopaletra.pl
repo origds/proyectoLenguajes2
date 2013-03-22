@@ -258,10 +258,56 @@ randomElem(Lista, Elem) :-
 %% SOPA LETRA
 
 % Predicado que devuelve todas las posibles sopas de letras
+%Nota: La posicion en la que estaran las palabras en la sopa
+%de letras vendran dadas por: Horizontal = 0, HorizontalReverse = 1,
+%Vertical = 2, VerticalReverse = 3, Diagonal = 4, DiagonalReverse = 5,
+%DiagonalInv = 6, DiagonalInvReverse = 7.
+crearSopaDeLetras(Alfabeto,Tam, [Palabra | Resto] ,Rechazadas, Sopa):-
+  armarSopa(Tam, Sopa),
+  random(0, Tam, Pos),
+  nl, write(Pos), nl,
+  elegirPredicado(Pos, Palabra, Sopa, Result),
+  nl, write('Result = '), nl,
+  mostrarSopa(Result).
 
-% sopaLetra(Alfabeto,Tam,Aceptadas,Rechazadas):-
-%   armarSopa(Sopa),
-%   
+elegirPredicado(0, Palabra, Sopa, Result) :-
+  nl , write('HORIZONTAL'), nl,
+  addHorizontal(Palabra, Sopa, Resultado).
+
+elegirPredicado(1, Palabra, Sopa, Result) :-
+  addHorizontalReverse(Palabra, Sopa, Result).
+
+elegirPredicado(2, Palabra, Sopa, Result) :-
+  addVertical(Palabra, Sopa, Result).
+
+elegirPredicado(3, Palabra, Sopa, Result) :-
+  addVerticalReverse(Palabra, Sopa, Result).
+
+elegirPredicado(4, Palabra, Sopa, Result) :-
+  nl, write('Entre!!'), nl,
+  write(Palabra), nl, mostrarSopa(Sopa), nl,
+  addDiagonal(Palabra, Sopa, Result).
+
+elegirPredicado(5, Palabra, Sopa, Result) :-
+  addDiagonalReverse(Palabra, Sopa, Result).
+
+elegirPredicado(6, Palabra, Sopa, Result) :-
+  addDiagonalInv(Palabra, Sopa, Result).
+
+elegirPredicado(7, Palabra, Sopa, Result) :-
+  addDiagonalInvReverse(Palabra, Sopa, Result).
+
+
+
+
+
+
+
+
+
+
+
+
 %% MOSTRAR SOPA.
   
 % Predicado que muestra las sopas de letra en pantalla
