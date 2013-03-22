@@ -312,7 +312,7 @@ rechazadaHoriz(Letras, Sopa) :-
   nth0(X, Sopa, Fila),
   comparar(Y,Letras,Fila),
   !,
-  rechazadaHoriz(Resto, Sopa),
+  rechazadaHoriz(_, Sopa),
   !.
 
 rechazadaVertical([],_).
@@ -320,8 +320,57 @@ rechazadaVertical(Letras, Sopa) :-
   trasponer(Sopa, SopaNueva),
   rechazadaHoriz(Letras, SopaNueva).
 
-%rechazadaDiagonal([],_).
-%rechazadaDiagonal(Letras,Sopa) :-
+rechazadaDiagonal([],_).
+rechazadaDiagonal(Letras,Sopa) :-
+  length(Sopa, Tam),
+  between(1, Tam, PosFila),
+  X is PosFila -1,
+  between(1,Tam,PosCol),
+  Y is PosCol-1, 
+  indiceValido(Sopa, X),
+  indiceValido(Sopa, Y),
+  comparaDiagonal(X,Y,Letras,Sopa),
+  !,
+  rechazadaDiagonal(_, Sopa),
+  !.
+
+rechazadaDiagSec([],_).
+rechazadaDiagSec(Letras,Sopa) :-
+  length(Sopa, Tam),
+  between(1, Tam, PosFila),
+  X is PosFila -1,
+  between(1,Tam,PosCol),
+  Y is PosCol-1, 
+  indiceValido(Sopa, X),
+  indiceValido(Sopa, Y),
+  comparaDiagonalSec(X,Y,Letras,Sopa),
+  !,
+  rechazadaDiagSec(_, Sopa),
+  !.
+
+
+%Predicado comparaDiagonal. Triunfa si la palabra esta en la
+%diagonal de la posicion que se le indique. 
+comparaDiagonalSec(_,_,[], _).
+comparaDiagonalSec(PosFila, PosCol, [Letra | Resto], Sopa) :-
+  nth0(PosFila, Sopa, Fila), %obtengo la fila que quiero revisar
+  nth0(PosCol, Fila, Letra1),  %Obtengo el elemento de la fila que me interesa.
+  Letra = Letra1,
+  Fil is PosFila + 1,
+  Col is PosCol - 1,
+  comparaDiagonalSec(Fil, Col, Resto, Sopa).
+
+%Predicado comparaDiagonal. Triunfa si la palabra esta en la
+%diagonal de la posicion que se le indique. 
+comparaDiagonal(_,_,[], _).
+comparaDiagonal(PosFila, PosCol, [Letra | Resto], Sopa) :-
+  nth0(PosFila, Sopa, Fila), %obtengo la fila que quiero revisar
+  nth0(PosCol, Fila, Letra1),  %Obtengo el elemento de la fila que me interesa.
+  Letra = Letra1,
+  Fil is PosFila + 1,
+  Col is PosCol + 1,
+  comparaDiagonal(Fil, Col, Resto, Sopa).
+
 
 %Predicado que compara los elementos de una lista con los de otra, triunfa 
 %cuando los elementos de la primera lista se encuentran todos en la segunda
@@ -332,9 +381,6 @@ comparar(PosCol, [Letra | Resto], Fila) :-
   Letra = Letra1,
   Pos is PosCol+1,
   comparar(Pos, Resto, Fila). 
-
-
-
 
 %% MOSTRAR SOPA.
   
