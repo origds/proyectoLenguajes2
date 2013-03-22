@@ -360,6 +360,11 @@ separar(A):-
   write(A),
   nl.
 
+quieroMas :-
+  nl, write('Quieres mas?'), nl,
+  read(Mas),
+  Mas \= mas. 
+
 %% GENERADOR SOPA
 
 % Predicado Principal: generadorSopa
@@ -385,4 +390,7 @@ generadorSopa:-
   cargarListaPalabra(ArchivoR,Alfabeto,Rechazadas),
   nl, write('Estas son las palabras aceptadas: '), write(Aceptadas), nl,
   nl, write('Estas son las palabras rechazadas: '), write(Rechazadas), nl,nl,
-  sopaLetra(Alfabeto,Tam,Aceptadas,Rechazadas).
+  sopaLetra(Alfabeto,Tam,Aceptadas,Rechazadas),
+  quieroMas,
+  !,
+  nl, write('Se acabo!, no quisiste mas sopas de letras :( '), nl.
