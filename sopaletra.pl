@@ -273,7 +273,7 @@ sopaLetra(Alfabeto,Tam,Aceptadas,Rechazadas):-
   armarSopa(Tam,Sopa),
   crearSopaDeLetras(Sopa,Alfabeto,Tam,Aceptadas,SopaLetras),
   rellenarEspacios(Alfabeto,SopaLetras,SopaFinal),
-  not(esRechazada(SopaFinal,Rechazadas)),
+  %not(esRechazada(SopaFinal,Rechazadas)),
   mostrarSopa(SopaFinal).
 
 % Predicado que triunfa cuando una de las palabras esta rechazada en la sopa.
@@ -359,6 +359,11 @@ separar(A):-
   write(A),
   nl.
 
+quieroMas :-
+  nl, write('Quieres mas?'), nl,
+  read(Mas),
+  Mas \= mas. 
+
 %% GENERADOR SOPA
 
 % Predicado Principal: generadorSopa
@@ -384,4 +389,7 @@ generadorSopa:-
   cargarListaPalabra(ArchivoR,Alfabeto,Rechazadas),
   nl, write('Estas son las palabras aceptadas: '), write(Aceptadas), nl,
   nl, write('Estas son las palabras rechazadas: '), write(Rechazadas), nl,nl,
-  sopaLetra(Alfabeto,Tam,Aceptadas,Rechazadas).
+  sopaLetra(Alfabeto,Tam,Aceptadas,Rechazadas),
+  quieroMas,
+  !,
+  nl, write('Se acabo!, no quisiste mas sopas de letras :( '), nl.
