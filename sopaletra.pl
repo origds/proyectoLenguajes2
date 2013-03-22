@@ -273,7 +273,7 @@ sopaLetra(Alfabeto,Tam,Aceptadas,Rechazadas):-
   armarSopa(Tam,Sopa),
   crearSopaDeLetras(Sopa,Alfabeto,Tam,Aceptadas,SopaLetras),
   rellenarEspacios(Alfabeto,SopaLetras,SopaFinal),
-  %not(esRechazada(SopaFinal,Rechazadas)),
+  not(esRechazada(SopaFinal,Rechazadas)),
   mostrarSopa(SopaFinal).
 
 % Predicado que triunfa cuando una de las palabras esta rechazada en la sopa.
