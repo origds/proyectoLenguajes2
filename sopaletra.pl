@@ -258,10 +258,6 @@ randomElem(Lista, Elem) :-
 %% SOPA LETRA
 
 % Predicado que devuelve todas las posibles sopas de letras
-%Nota: La posicion en la que estaran las palabras en la sopa
-%de letras vendran dadas por: Horizontal = 0, HorizontalReverse = 1,
-%Vertical = 2, VerticalReverse = 3, Diagonal = 4, DiagonalReverse = 5,
-%DiagonalInv = 6, DiagonalInvReverse = 7.
 
 sopaLetra(Alfabeto,Tam,Aceptadas,Rechazadas):-
   armarSopa(Tam,Sopa),
@@ -273,19 +269,17 @@ sopaLetra(Alfabeto,Tam,Aceptadas,Rechazadas):-
 
 % Predicado que triunfa cuando una de las palabras esta rechazada en la sopa.
 
-esRechazada(_,[]).
-
 esRechazada(Sopa,[Rechazada|Resto]):-
   atom_chars(Rechazada,Letras),
-  rechazar(Letras,Sopa),
-  esRechazada(Sopa,Resto),
+  (rechazar(Letras,Sopa);
+  esRechazada(Sopa,Resto)),
   !.
   
 esRechazada(Sopa,[Rechazada|Resto]):-
   atom_chars(Rechazada,Letras),
   reverse(Letras,Reverse),
-  rechazar(Reverse,Sopa),
-  esRechazada(Sopa,Resto),
+  (rechazar(Reverse,Sopa);
+  esRechazada(Sopa,Resto)),
   !.
 
 rechazar(Palabra,Sopa):-
@@ -293,6 +287,12 @@ rechazar(Palabra,Sopa):-
 
 rechazar(Palabra,Sopa):-
   rechazadaVertical(Palabra,Sopa).
+  
+rechazar(Palabra,Sopa):-
+  rechazadaDiagonal(Palabra,Sopa).
+  
+rechazar(Palabra,Sopa):-
+  rechazadaDiagInv(Palabra,Sopa).
   
 % Predicado que crea la sopa de letras con las palabras aceptadas
   
@@ -342,8 +342,8 @@ rechazadaDiagonal(Letras,Sopa) :-
   rechazadaDiagonal(_, Sopa),
   !.
 
-rechazadaDiagSec([],_).
-rechazadaDiagSec(Letras,Sopa) :-
+rechazadaDiagInv([],_).
+rechazadaDiagInv(Letras,Sopa) :-
   length(Sopa, Tam),
   between(1, Tam, PosFila),
   X is PosFila -1,
@@ -351,22 +351,22 @@ rechazadaDiagSec(Letras,Sopa) :-
   Y is PosCol-1, 
   indiceValido(Sopa, X),
   indiceValido(Sopa, Y),
-  comparaDiagonalSec(X,Y,Letras,Sopa),
+  comparaDiagonalInv(X,Y,Letras,Sopa),
   !,
-  rechazadaDiagSec(_, Sopa),
+  rechazadaDiagInv(_, Sopa),
   !.
 
 
 %Predicado comparaDiagonal. Triunfa si la palabra esta en la
 %diagonal de la posicion que se le indique. 
-comparaDiagonalSec(_,_,[], _).
-comparaDiagonalSec(PosFila, PosCol, [Letra | Resto], Sopa) :-
+comparaDiagonalInv(_,_,[], _).
+comparaDiagonalInv(PosFila, PosCol, [Letra | Resto], Sopa) :-
   nth0(PosFila, Sopa, Fila), %obtengo la fila que quiero revisar
   nth0(PosCol, Fila, Letra1),  %Obtengo el elemento de la fila que me interesa.
   Letra = Letra1,
   Fil is PosFila + 1,
   Col is PosCol - 1,
-  comparaDiagonalSec(Fil, Col, Resto, Sopa).
+  comparaDiagonalInv(Fil, Col, Resto, Sopa).
 
 %Predicado comparaDiagonal. Triunfa si la palabra esta en la
 %diagonal de la posicion que se le indique. 
