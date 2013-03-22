@@ -6,6 +6,12 @@
 %% Fecha: 22/03/13
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+
+%add(X,L,L1).
+%adds element X to the beginning of the list L and returns L1
+enlistar(X,L,[X|L]).
+
 %% CARGAR LISTA PALABRA
 
 % Predicado para cargar las listas de palabras
@@ -262,48 +268,70 @@ randomElem(Lista, Elem) :-
 %de letras vendran dadas por: Horizontal = 0, HorizontalReverse = 1,
 %Vertical = 2, VerticalReverse = 3, Diagonal = 4, DiagonalReverse = 5,
 %DiagonalInv = 6, DiagonalInvReverse = 7.
-crearSopaDeLetras(Alfabeto,Tam, [Palabra | Resto] ,Rechazadas, Sopa):-
-  armarSopa(Tam, Sopa),
-  random(0, Tam, Pos),
-  nl, write(Pos), nl,
-  elegirPredicado(Pos, Palabra, Sopa, Result),
-  nl, write('Result = '), nl,
-  mostrarSopa(Result).
 
-elegirPredicado(0, Palabra, Sopa, Result) :-
-  nl , write('HORIZONTAL'), nl,
-  addHorizontal(Palabra, Sopa, Resultado).
+sopaLetra(Alfabeto,Tam,Aceptadas,Rechazadas):-
+  armarSopa(Tam,Sopa),
+  crearSopaDeLetras(Sopa,Alfabeto,Tam,Aceptadas,SopaLetras),
+  rellenarEspacios(Alfabeto,SopaLetras,SopaFinal),
+  not(esRechazada(SopaFinal,Rechazadas)),
+  mostrarSopa(SopaFinal).
 
-elegirPredicado(1, Palabra, Sopa, Result) :-
-  addHorizontalReverse(Palabra, Sopa, Result).
+% Predicado que triunfa cuando una de las palabras esta rechazada en la sopa.
 
-elegirPredicado(2, Palabra, Sopa, Result) :-
-  addVertical(Palabra, Sopa, Result).
+esRechazada(Sopa,[Rechazada|Resto]):-
+  atom_chars(Rechazada,Letras),
+  rechazadaHoriz(Letras,Sopa); !,
+  rechazadaVertical(Letras,Sopa), !,
+  reverse(Letras,Reverse),
+  rechazadaHoriz(Reverse,Sopa); !,
+  rechazadaVertical(Reverse,Sopa), !,
+  esRechazada(Sopa,Resto),
+  !.
 
-elegirPredicado(3, Palabra, Sopa, Result) :-
-  addVerticalReverse(Palabra, Sopa, Result).
+crearSopaDeLetras(SopaFinal,_,_,[], SopaFinal).
+crearSopaDeLetras(Sopa,Alfabeto,Tam, [Palabra | Resto] , SopaFinal):-
+  Predicados = ['addHorizontal', 'addHorizontalReverse', 'addVertical', 
+              'addVerticalReverse', 'addDiagonal', 'addDiagonalReverse',
+              'addDiagonalInv', 'addDiagonalInvReverse'],
+  member(Llamada,Predicados),
+  Lambda=.. [Llamada,Palabra,Sopa,Result],
+  call(Lambda),
+  crearSopaDeLetras(Result,Alfabeto,Tam,Resto,SopaFinal).
 
-elegirPredicado(4, Palabra, Sopa, Result) :-
-  nl, write('Entre!!'), nl,
-  write(Palabra), nl, mostrarSopa(Sopa), nl,
-  addDiagonal(Palabra, Sopa, Result).
+% Predicado que verifica las palabras rechazadas en la sopa horizontalmente
 
-elegirPredicado(5, Palabra, Sopa, Result) :-
-  addDiagonalReverse(Palabra, Sopa, Result).
+rechazadaHoriz([],_).
+rechazadaHoriz(Letras, Sopa) :- 
+  length(Sopa, Tam),
+  between(1, Tam, PosFila),
+  X is PosFila -1,
+  between(1,Tam,PosCol),
+  Y is PosCol-1, 
+  indiceValido(Sopa, X),
+  indiceValido(Sopa, Y),
+  nth0(X, Sopa, Fila),
+  comparar(Y,Letras,Fila),
+  !,
+  rechazadaHoriz(Resto, Sopa),
+  !.
 
-elegirPredicado(6, Palabra, Sopa, Result) :-
-  addDiagonalInv(Palabra, Sopa, Result).
+rechazadaVertical([],_).
+rechazadaVertical(Letras, Sopa) :-
+  trasponer(Sopa, SopaNueva),
+  rechazadaHoriz(Letras, SopaNueva).
 
-elegirPredicado(7, Palabra, Sopa, Result) :-
-  addDiagonalInvReverse(Palabra, Sopa, Result).
+%rechazadaDiagonal([],_).
+%rechazadaDiagonal(Letras,Sopa) :-
 
-
-
-
-
-
-
-
+%Predicado que compara los elementos de una lista con los de otra, triunfa 
+%cuando los elementos de la primera lista se encuentran todos en la segunda
+%en el mismo orden.
+comparar(_, [], _).
+comparar(PosCol, [Letra | Resto], Fila) :-
+  nth0(PosCol, Fila, Letra1),
+  Letra = Letra1,
+  Pos is PosCol+1,
+  comparar(Pos, Resto, Fila). 
 
 
 
@@ -354,6 +382,6 @@ generadorSopa:-
   read(ArchivoR),
   cargarListaPalabra(ArchivoA,Alfabeto,Aceptadas),
   cargarListaPalabra(ArchivoR,Alfabeto,Rechazadas),
-  write(Aceptadas),
-  write(Rechazadas).
-  %sopaLetra(Alfabeto,Tam,Aceptadas,Rechazadas).
+  nl, write('Estas son las palabras aceptadas: '), write(Aceptadas), nl,
+  nl, write('Estas son las palabras rechazadas: '), write(Rechazadas), nl,nl,
+  sopaLetra(Alfabeto,Tam,Aceptadas,Rechazadas).
