@@ -10,14 +10,27 @@ de la clase responda al mensaje subCollectionFrom:to:"
 
 OrderedCollection extend [
     subCollectionFrom: ini to: fin [
+      |nuevo i|
+      i:= ini.
       nuevo:= OrderedCollection new.
-      [ini<=fin] whileTrue: [
-        nuevo at: ini put: (self at: ini)
-        ini:= ini+1.
-      ]
-      return ^.
+      ini to: fin do: [:x | nuevo addLast: (self at: x)].
+      ^nuevo 
     ]
 ]
+
+|a|
+a:= OrderedCollection new.
+a addLast: 4.
+a addLast: 0.
+a addLast: 3.
+a addLast: -2.
+a addLast: -1. 
+a addLast: 5. 
+a addLast: 1. 
+a printNl.
+(a subCollectionFrom: 5 to: 7) printNl.
+
+
 
 "Pregunta 2. Extienda OrderedCollection, tal que toda instancia de la clase responda al mensaje filter:"
 
