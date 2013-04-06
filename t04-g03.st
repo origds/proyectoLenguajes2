@@ -7,7 +7,7 @@
 
 "Pregunta 1. Extienda OrderedCollection, tal que toda instancia
 de la clase responda al mensaje subCollectionFrom:to:"
-"
+
 OrderedCollection extend [
     subCollectionFrom: ini to: fin [
       |nuevo i|
@@ -17,7 +17,6 @@ OrderedCollection extend [
       ^nuevo 
     ]
 ]
-"
 
 |a|
 a:= OrderedCollection new.
@@ -34,6 +33,7 @@ a printNl.
 
 
 "Pregunta 2. Extienda OrderedCollection, tal que toda instancia de la clase responda al mensaje filter:"
+
 OrderedCollection extend [
   filter: condicion [
     | aux i nuevo tam seCumple|
