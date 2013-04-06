@@ -32,7 +32,8 @@ a printNl.
 
 
 
-"Pregunta 2. Extienda OrderedCollection, tal que toda instancia de la clase responda al mensaje filter:"
+"Pregunta 2. Extienda OrderedCollection, tal que toda instancia
+de la clase responda al mensaje filter:"
 
 OrderedCollection extend [
   filter: condicion [
@@ -58,7 +59,10 @@ nueva addLast: 2.
 nueva addLast: -3.
 nueva addLast: 0.
 nueva addLast: -5.
-aux := nueva filter: [:x | x  == -5 ].
+aux := nueva filter: [:x | x  >= 0 ].
 aux printNl.
 
-"Pregunta 3. Extienda la clase Array para implementar el método cuyo mensaje es esCuadradoMagicoNormal."
+
+
+"Pregunta 3. Extienda la clase Array para implementar el método
+cuyo mensaje es esCuadradoMagicoNormal."
