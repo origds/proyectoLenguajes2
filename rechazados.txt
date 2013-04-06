@@ -1,1 +1,2 @@
-[jojoto,poporo,todo].
+[mo, pi].
+[si,no,'3'].
