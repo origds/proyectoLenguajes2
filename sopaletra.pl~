@@ -6,6 +6,12 @@
 %% Fecha: 22/03/13
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+
+%add(X,L,L1).
+%adds element X to the beginning of the list L and returns L1
+enlistar(X,L,[X|L]).
+
 %% CARGAR LISTA PALABRA
 
 % Predicado para cargar las listas de palabras
@@ -38,20 +44,7 @@ comparar([C|R],Alf):-
   member(C,Alf),
   comparar(R,Alf),
   !.
-  
-% Predicado que verifica si las palabras aceptadas tienen logitud valida para esa sopa 
 
-longitudesValidas([], _) :- !.
-longitudesValidas([H|T], N) :- 
-  atom_chars(H,C),
-  length(C, L),
-  L =< N,
-  !,
-  longitudesValidas(T, N).
-longitudesValidas([H|_], _) :- 
-  !,
-  nl, write('La palabra "'), write(H), write('" es demasiado larga.'), nl,
-  fail.
 
 % Predicado que arma las sopas de letras
 
@@ -271,44 +264,31 @@ randomElem(Lista, Elem) :-
 %% SOPA LETRA
 
 % Predicado que devuelve todas las posibles sopas de letras
+%Nota: La posicion en la que estaran las palabras en la sopa
+%de letras vendran dadas por: Horizontal = 0, HorizontalReverse = 1,
+%Vertical = 2, VerticalReverse = 3, Diagonal = 4, DiagonalReverse = 5,
+%DiagonalInv = 6, DiagonalInvReverse = 7.
 
 sopaLetra(Alfabeto,Tam,Aceptadas,Rechazadas):-
   armarSopa(Tam,Sopa),
   crearSopaDeLetras(Sopa,Alfabeto,Tam,Aceptadas,SopaLetras),
   rellenarEspacios(Alfabeto,SopaLetras,SopaFinal),
+  nl,write(SopaFinal),nl,
   not(esRechazada(SopaFinal,Rechazadas)),
-  nl,
   mostrarSopa(SopaFinal).
 
 % Predicado que triunfa cuando una de las palabras esta rechazada en la sopa.
 
 esRechazada(Sopa,[Rechazada|Resto]):-
   atom_chars(Rechazada,Letras),
-  (rechazar(Letras,Sopa);
-  esRechazada(Sopa,Resto)),
-  !.
-  
-esRechazada(Sopa,[Rechazada|Resto]):-
-  atom_chars(Rechazada,Letras),
   reverse(Letras,Reverse),
-  (rechazar(Reverse,Sopa);
-  esRechazada(Sopa,Resto)),
+  rechazadaHoriz(Letras,Sopa);
+  rechazadaVertical(Letras,Sopa);
+  rechazadaHoriz(Reverse,Sopa);
+  rechazadaVertical(Reverse,Sopa),
+  esRechazada(Sopa,Resto),
   !.
 
-rechazar(Palabra,Sopa):-
-  rechazadaHoriz(Palabra,Sopa).
-
-rechazar(Palabra,Sopa):-
-  rechazadaVertical(Palabra,Sopa).
-  
-rechazar(Palabra,Sopa):-
-  rechazadaDiagonal(Palabra,Sopa).
-  
-rechazar(Palabra,Sopa):-
-  rechazadaDiagInv(Palabra,Sopa).
-  
-% Predicado que crea la sopa de letras con las palabras aceptadas
-  
 crearSopaDeLetras(SopaFinal,_,_,[], SopaFinal).
 crearSopaDeLetras(Sopa,Alfabeto,Tam, [Palabra | Resto] , SopaFinal):-
   Predicados = ['addHorizontal', 'addHorizontalReverse', 'addVertical', 
@@ -341,68 +321,21 @@ rechazadaVertical(Letras, Sopa) :-
   trasponer(Sopa, SopaNueva),
   rechazadaHoriz(Letras, SopaNueva).
 
-rechazadaDiagonal([],_).
-rechazadaDiagonal(Letras,Sopa) :-
-  length(Sopa, Tam),
-  between(1, Tam, PosFila),
-  X is PosFila -1,
-  between(1,Tam,PosCol),
-  Y is PosCol-1, 
-  indiceValido(Sopa, X),
-  indiceValido(Sopa, Y),
-  comparaDiagonal(X,Y,Letras,Sopa),
-  !,
-  rechazadaDiagonal(_, Sopa),
-  !.
-
-rechazadaDiagInv([],_).
-rechazadaDiagInv(Letras,Sopa) :-
-  length(Sopa, Tam),
-  between(1, Tam, PosFila),
-  X is PosFila -1,
-  between(1,Tam,PosCol),
-  Y is PosCol-1, 
-  indiceValido(Sopa, X),
-  indiceValido(Sopa, Y),
-  comparaDiagonalInv(X,Y,Letras,Sopa),
-  !,
-  rechazadaDiagInv(_, Sopa),
-  !.
-
-%Predicado comparaDiagonal. Triunfa si la palabra esta en la
-%diagonal de la posicion que se le indique. 
-
-comparaDiagonalInv(_,_,[], _).
-comparaDiagonalInv(PosFila, PosCol, [Letra | Resto], Sopa) :-
-  nth0(PosFila, Sopa, Fila), %obtengo la fila que quiero revisar
-  nth0(PosCol, Fila, Letra1),  %Obtengo el elemento de la fila que me interesa.
-  Letra = Letra1,
-  Fil is PosFila + 1,
-  Col is PosCol - 1,
-  comparaDiagonalInv(Fil, Col, Resto, Sopa).
-
-%Predicado comparaDiagonal. Triunfa si la palabra esta en la
-%diagonal de la posicion que se le indique. 
-
-comparaDiagonal(_,_,[], _).
-comparaDiagonal(PosFila, PosCol, [Letra | Resto], Sopa) :-
-  nth0(PosFila, Sopa, Fila), %obtengo la fila que quiero revisar
-  nth0(PosCol, Fila, Letra1),  %Obtengo el elemento de la fila que me interesa.
-  Letra = Letra1,
-  Fil is PosFila + 1,
-  Col is PosCol + 1,
-  comparaDiagonal(Fil, Col, Resto, Sopa).
+%rechazadaDiagonal([],_).
+%rechazadaDiagonal(Letras,Sopa) :-
 
 %Predicado que compara los elementos de una lista con los de otra, triunfa 
 %cuando los elementos de la primera lista se encuentran todos en la segunda
 %en el mismo orden.
-
 comparar(_, [], _).
 comparar(PosCol, [Letra | Resto], Fila) :-
   nth0(PosCol, Fila, Letra1),
   Letra = Letra1,
   Pos is PosCol+1,
   comparar(Pos, Resto, Fila). 
+
+
+
 
 %% MOSTRAR SOPA.
   
@@ -427,13 +360,6 @@ separar(A):-
   write(A),
   nl.
 
-% Predicado que agrega el quiero mas .
-
-quieroMas :-
-  nl, write('Quieres mas?'), nl,
-  read(Mas),
-  Mas \= mas. 
-
 %% GENERADOR SOPA
 
 % Predicado Principal: generadorSopa
@@ -457,10 +383,6 @@ generadorSopa:-
   read(ArchivoR),
   cargarListaPalabra(ArchivoA,Alfabeto,Aceptadas),
   cargarListaPalabra(ArchivoR,Alfabeto,Rechazadas),
-  longitudesValidas(Aceptadas,Tam),
   nl, write('Estas son las palabras aceptadas: '), write(Aceptadas), nl,
   nl, write('Estas son las palabras rechazadas: '), write(Rechazadas), nl,nl,
-  sopaLetra(Alfabeto,Tam,Aceptadas,Rechazadas),
-  quieroMas,
-  !,
-  nl, write('Se acabo!, no quisiste mas sopas de letras :( '), nl.
+  sopaLetra(Alfabeto,Tam,Aceptadas,Rechazadas).
