@@ -177,57 +177,61 @@ Cola extend [
     ^elemento
   ]
 
-        desencolar [
-                |tam elemento|
-                tam := self tamano.
+  desencolar [
+    |tam elemento|
+    tam := self tamano.
     (tam = 0) ifTrue: [
       ^(self error: 'Error: La cola se encuentra vacia')
     ].
     elemento := (super getColeccion) removeFirst.
     ^elemento
-        ] 
+  ] 
 
 ].
 
 "Pregunta 4. Implementacion de Cola Memoria"
 
 Cola subclass: ColaMemoria [
-        |desencolados|
+  
+  |desencolados|
 
-        inicializar [
-                desencolados := Set new.
-        ]
+  inicializar [
+    desencolados := Set new.
+  ]
+  
 ]
 
 ColaMemoria class extend [
         
-        new[
-                ^(super new inicializar)
-        ]
+  new [
+    ^(super new inicializar)
+  ]
 
 ]
 
 ColaMemoria extend [
-        tamano [
-                ^(super tamano)
-        ]
+  
+  tamano [
+    ^(super tamano)
+  ]
 
-        proximo [
-                ^(super proximo)
-        ]
+  proximo [
+    ^(super proximo)
+  ]
 
-        encolar: elemento [
-                ^(super encolar: elemento)
-        ]
+  encolar: elemento [
+    ^(super encolar: elemento)
+  ]
 
-        desencolar [
-                |elemento|
-                elemento := super desencolar.
-                desencolados add: elemento.
-                ^elemento
-        ]
+  desencolar [
+    |elemento|
+    elemento := super desencolar.
+    desencolados add: elemento.
+    ^elemento
+  ]
 
-        obtenerDesencolados [
-                ^desencolados
-        ]
+  obtenerDesencolados [
+    ^desencolados
+  ]
+  
 ].
