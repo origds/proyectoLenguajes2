@@ -66,3 +66,43 @@ aux printNl.
 
 "Pregunta 3. Extienda la clase Array para implementar el método
 cuyo mensaje es esCuadradoMagicoNormal."
+
+"Cuadrado Magico"
+
+Array extend [
+  "
+  esCuadradoMagicoNormal[
+  |i j tam ctte sum |
+  i := 1.
+  j := 1.
+  sum := 0.
+  tam := self size.
+  ctte := (tam*(tam*tam +1)) / 2.
+
+  (self isEmpty) ifTrue: [
+    ^true.
+  ]
+
+  1 to: tam do: [ "verificar las filas"
+
+  ]
+
+
+  ]"
+
+  sumarElementos [
+    | i sum tam |
+    i:=1.
+    tam := self size.
+    sum := 0.
+
+    1 to: tam do: [
+      elem := self at: i.
+      sum := sum + elem.
+      i := i+1.
+    ]
+  ]
+
+
+
+].
