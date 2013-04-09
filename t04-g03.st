@@ -3,7 +3,7 @@
                 Carla Urrea 09-11215"
 "Fecha de modificacion: 08/04/13"
 
-"Implementacion. Pare 1."
+"Implementacion. Parte 1."
 
 "Pregunta 1. Extienda OrderedCollection, tal que toda instancia
 de la clase responda al mensaje subCollectionFrom:to:"
@@ -41,10 +41,20 @@ OrderedCollection extend [
 "Pregunta 3. Extienda la clase Array para implementar el método
 cuyo mensaje es esCuadradoMagicoNormal."
 
-
 "Cuadrado Magico"
 
 Array extend [
+
+  esCuadradoMagicoNormal [
+    | magicoNormal |
+    (self esCuadrada) ifTrue: [
+      magicoNormal:= (self sumarFilas) & (self sumarColumnas) 
+        & (self sumarDiagonalPpal) & (self sumarDiagonalSec).
+    ] ifFalse: [
+      magicoNormal:= false.
+    ].
+    ^magicoNormal.
+  ]
 
   sumarFilas [
     | sumF sumD1 sumD2 tam elem ctte esMagico subElem |
@@ -61,7 +71,6 @@ Array extend [
           elem := subElem at: j.
           sumF := sumF + elem.
         ].
-        sumF printNl. 
       (sumF ~= ctte) ifTrue: [
         esMagico := false.
       ].
@@ -88,7 +97,7 @@ Array extend [
       ].
       sum := 0.
     ].
-  ^esMagico
+    ^esMagico
   ]
 
   sumarDiagonalPpal [
@@ -123,8 +132,6 @@ Array extend [
     ^bool
   ]
 
-
-
   esCuadrada [
     |i elem tam tam1 esIgual|
     i := 1.
@@ -144,43 +151,9 @@ Array extend [
       i:= i + 1.
     ].
     ^esIgual
-
   ]
 
 ].
-
-|b c d e|
-b := Array new: 3.
-c := Array new: 3.
-d := Array new: 3.
-e := Array new: 3.
-
-c at: 1 put: 2.
-c at: 2 put: 7.
-c at: 3 put: 6.
-
-b at: 1 put: c.
-
-d at: 1 put: 9.
-d at: 2 put: 5.
-d at: 3 put: 1.
-
-b at: 2 put: d.
-
-e at: 1 put: 4.
-e at: 2 put: 3.
-e at: 3 put: 8.
-
-b at: 3 put: e.
-b printNl.
-hola := b sumarDiagonalPpal. 
-hola printNl.
-
-
-
-
-
-
 
 "Implementacion. Parte 2"
 
