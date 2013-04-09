@@ -224,8 +224,9 @@ ColaMemoria extend [
   ]
 
   desencolar [
-    |elemento|
-    elemento := super desencolar.
+    |elemento nuevacola|
+    elemento := super proximo.
+    nuevacola:= super desencolar.
     desencolados add: elemento.
     ^self
   ]
