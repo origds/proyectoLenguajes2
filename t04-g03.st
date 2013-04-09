@@ -265,7 +265,7 @@ Pila extend [
     ].
     elemento:= self tope.
     (super getColeccion) removeFirst.
-    ^elemento    
+    ^self
   ]
   
   desempilarHasta: bloque [
@@ -275,7 +275,7 @@ Pila extend [
       ^(self error: 'La pila se encuentra vacia. No puede desempilar ningun elemento.')
     ].
     1 to: tam do: 
-      [ :x | (bloque value: (self tope)) ifTrue: [self desempilar] ]
+      [ :x | (bloque value: (self tope)) ifFalse: [self desempilar] ]
   ]
   
 ].
@@ -324,10 +324,10 @@ Cola extend [
       ^(self error: 'Error: La cola se encuentra vacia')
     ].
     elemento := (super getColeccion) removeFirst.
-    ^elemento
+    ^self
   ] 
 
-].
+].  
 
 "Pregunta 4. Implementacion de Cola Memoria"
 
@@ -365,9 +365,10 @@ ColaMemoria extend [
 
   desencolar [
     |elemento|
-    elemento := super desencolar.
+    elemento := super proximo.
+    super desencolar.
     desencolados add: elemento.
-    ^elemento
+    ^self
   ]
 
   obtenerDesencolados [
